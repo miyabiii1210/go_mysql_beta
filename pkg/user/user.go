@@ -13,8 +13,6 @@ type User struct {
 	TelNumber string
 }
 
-type UserList []User
-
 var (
 	ErrUserNotFound = errors.New("user not found.")
 )
@@ -32,4 +30,8 @@ func GetUserInfo(db *sql.DB, ctx context.Context, uid uint32) (*User, error) {
 		return nil, err
 	}
 	return u, nil
+}
+
+func GetAllUsersInfo(db *sql.DB, ctx context.Context) ([]*User, error) {
+	return getAllUsersInfo(db, ctx)
 }

@@ -27,7 +27,7 @@ func saveUser(db *sql.DB, ctx context.Context, u *User) (int64, error) {
 }
 
 func getUserInfo(db *sql.DB, ctx context.Context, uid uint32) (*User, error) {
-	query := "select uid, name, email, tel_number from user where uid = ?;"
+	query := "SELECT uid, name, email, tel_number FROM user WHERE uid = ?;"
 	stmt, err := db.PrepareContext(ctx, query)
 	if err != nil {
 		return nil, err
@@ -42,4 +42,30 @@ func getUserInfo(db *sql.DB, ctx context.Context, uid uint32) (*User, error) {
 	}
 
 	return r, nil
+}
+
+func getAllUsersInfo(db *sql.DB, ctx context.Context) ([]*User, error) {
+	query := "SELECT uid, name, email, tel_number FROM user;"
+	stmt, err := db.PrepareContext(ctx, query)
+	if err != nil {
+		return nil, err
+	}
+	defer stmt.Close()
+
+	rows, err := stmt.QueryContext(ctx)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	users := []*User{}
+	for rows.Next() {
+		r := new(User)
+		if err = rows.Scan(&r.Uid, &r.Name, &r.Email, &r.TelNumber); err != nil {
+			return nil, err
+		}
+		users = append(users, r)
+	}
+
+	return users, nil
 }

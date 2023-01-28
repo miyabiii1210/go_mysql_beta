@@ -95,3 +95,50 @@ func TestGetUserInfo(t *testing.T) {
 		})
 	}
 }
+
+func TestGetAllUsersInfo(t *testing.T) {
+	type args struct {
+		ctx context.Context
+	}
+	tests := []struct {
+		name    string
+		args    args
+		wantErr bool
+	}{
+		{
+			name: "get all users info",
+			args: args{
+				ctx: context.TODO(),
+			},
+			wantErr: false,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			db, err := database.ConnectionToDB()
+			if err != nil {
+				t.Errorf("ConnectionToDB error: %v\n", err)
+				return
+			}
+
+			users, err := user.GetAllUsersInfo(db, tt.args.ctx)
+			if err != nil {
+				t.Errorf("GetAllUsersInfo error: %v\n", err)
+				return
+			}
+
+			if len(users) <= 0 {
+				t.Log("user does not exist.")
+				return
+			}
+
+			for i, user := range users {
+				t.Logf("[%d] user: %v\n", i, user)
+			}
+
+			util.Sleep(1)
+			t.Logf("%s fin.\n", tt.name)
+		})
+	}
+}
