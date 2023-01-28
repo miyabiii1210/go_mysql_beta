@@ -24,10 +24,10 @@ func TestSaveUser(t *testing.T) {
 			args: args{
 				ctx: context.TODO(),
 				user: user.User{
-					Uid:       0,
-					Name:      "sa",
-					Email:     "123abc@gmail.com",
-					TelNumber: "050-1234-5678",
+					Uid:       10000001,
+					Name:      "sa123",
+					Email:     "12345abcde@gmail.com",
+					TelNumber: "080-1234-5678",
 				},
 			},
 			wantErr: false,

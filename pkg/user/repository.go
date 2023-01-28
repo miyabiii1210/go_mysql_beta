@@ -6,7 +6,7 @@ import (
 )
 
 func saveUser(db *sql.DB, ctx context.Context, u *User) (int64, error) {
-	query := "INSERT INTO user(uid, name, email, tel_number) VALUES(?, ?, ?, ?);"
+	query := "INSERT INTO user(uid, name, email, tel_number) VALUES(?, ?, ?, ?) ON DUPLICATE KEY UPDATE name = VALUES(name), email = VALUES(email), tel_number = VALUES(tel_number);"
 	stmt, err := db.PrepareContext(ctx, query)
 	if err != nil {
 		return 0, err
