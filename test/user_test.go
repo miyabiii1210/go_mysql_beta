@@ -142,3 +142,48 @@ func TestGetAllUsersInfo(t *testing.T) {
 		})
 	}
 }
+
+func TestDeleteUser(t *testing.T) {
+	type args struct {
+		ctx context.Context
+		uid uint32
+	}
+	tests := []struct {
+		name    string
+		args    args
+		wantErr bool
+	}{
+		{
+			name: "test format",
+			args: args{
+				ctx: context.TODO(),
+				uid: 10000003,
+			},
+			wantErr: false,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			db, err := database.ConnectionToDB()
+			if err != nil {
+				t.Errorf("ConnectionToDB error: %v\n", err)
+				return
+			}
+
+			if err = user.DeleteUser(db, tt.args.ctx, tt.args.uid); err != nil {
+				t.Errorf("DeleteUser error: %v\n", err)
+				return
+			}
+
+			u, err := user.GetUserInfo(db, tt.args.ctx, tt.args.uid)
+			if err != nil {
+				t.Logf("GetUserInfo error: %v\n", err)
+			}
+			t.Log("delete process completed. ", u)
+
+			util.Sleep(1)
+			t.Logf("%s fin.\n", tt.name)
+		})
+	}
+}

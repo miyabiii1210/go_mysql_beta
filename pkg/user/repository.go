@@ -69,3 +69,19 @@ func getAllUsersInfo(db *sql.DB, ctx context.Context) ([]*User, error) {
 
 	return users, nil
 }
+
+func deleteUser(db *sql.DB, ctx context.Context, uid uint32) error {
+	query := "DELETE FROM user WHERE uid = ?;"
+	stmt, err := db.PrepareContext(ctx, query)
+	if err != nil {
+		return err
+	}
+	defer stmt.Close()
+
+	_, err = stmt.ExecContext(ctx, uid)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}

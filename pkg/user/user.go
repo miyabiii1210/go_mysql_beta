@@ -35,3 +35,7 @@ func GetUserInfo(db *sql.DB, ctx context.Context, uid uint32) (*User, error) {
 func GetAllUsersInfo(db *sql.DB, ctx context.Context) ([]*User, error) {
 	return getAllUsersInfo(db, ctx)
 }
+
+func DeleteUser(db *sql.DB, ctx context.Context, uid uint32) error {
+	return deleteUser(db, ctx, uid)
+}
