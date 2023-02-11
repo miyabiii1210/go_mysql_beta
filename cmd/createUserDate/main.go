@@ -3,11 +3,13 @@ package main
 import (
 	"context"
 	"fmt"
+	"strconv"
 
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/joho/godotenv"
 	"github.com/miyabiii1210/go_mysql_beta/go/pkg/database"
 	"github.com/miyabiii1210/go_mysql_beta/go/pkg/user"
+	"github.com/miyabiii1210/go_mysql_beta/go/pkg/util"
 )
 
 func init() {
@@ -19,7 +21,10 @@ func init() {
 }
 
 const (
-	USER_COUNT = 100
+	USER_COUNT       = 100
+	HOSTNAME_DIGIT   = 8
+	TEL_NUMBER_MAX   = 9999
+	TEL_NUMBER_DIGIT = 4
 )
 
 func GenerateUserDate(cnt int) error {
@@ -29,13 +34,23 @@ func GenerateUserDate(cnt int) error {
 	}
 	defer db.Close()
 
-	u := user.User{
-		Name:      "test-user",
-		Email:     "test-mail@example.co.jp",
-		TelNumber: "050-1234-5678",
+	u := user.User{}
+
+	// for email address
+	multipleRandomStr, err := util.GenerateMultipleRandomString(HOSTNAME_DIGIT, USER_COUNT, util.LowercaseStrAndNumMix)
+	if err != nil {
+		return err
 	}
 
+	// for tel number
+	numArr := util.GenerateMultipleRandomNumber(TEL_NUMBER_MAX, USER_COUNT)
+	numStr := util.MultipleDigitCompensating(numArr, TEL_NUMBER_DIGIT)
+
 	for i := 0; i < USER_COUNT; i++ {
+		u.Name = "test-user-" + strconv.Itoa(i+1)
+		u.Email = multipleRandomStr[i] + "@example.co.jp"
+		u.TelNumber = "090-" + numStr[i] + "-" + numStr[USER_COUNT-(i+1)]
+
 		lastUid, err := user.SaveUser(db, context.TODO(), &u)
 		if err != nil {
 			return err
