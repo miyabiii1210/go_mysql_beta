@@ -21,10 +21,10 @@ func init() {
 }
 
 const (
-	USER_COUNT       = 100
-	HOSTNAME_DIGIT   = 8
-	TEL_NUMBER_MAX   = 9999
-	TEL_NUMBER_DIGIT = 4
+	USER_COUNT       = 100  // 生成するユーザ数
+	HOSTNAME_DIGIT   = 8    // emailのホストネームに指定する文字数
+	TEL_NUMBER_MAX   = 9999 // 電話番号の第2、第3ブロックの上限値
+	TEL_NUMBER_DIGIT = 4    // 電話番号の第2、第3ブロックの桁数
 )
 
 func GenerateUserDate(cnt int) error {

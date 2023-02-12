@@ -1,20 +1,21 @@
 version: '3'
 services:
-  db:
+  mysql:
     image: mysql:8.0.21
-    container_name: mysql-container
-    ports:
-      - "${MYSQL_HOST_PORT}:${MYSQL_DIST_PORT}"
-    command: --default-authentication-plugin=mysql_native_password
+    container_name: mysql_container
     environment:
       MYSQL_USER: "${MYSQL_USER}"
       MYSQL_PASSWORD: "${MYSQL_PASSWORD}"
       MYSQL_ROOT_PASSWORD: "${MYSQL_ROOT_PASSWORD}"
       MYSQL_DATABASE: "${MYSQL_DATABASE}"
-    volumes:
-      - ./docker/db/data:/var/lib/mysql
-      - ./docker/db/my.cnf:/etc/mysql/conf.d/my.cnf
-      - ./docker/db/sql:/docker-entrypoint-initdb.d
+      TZ: "Asia/Tokyo"
+    command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+    ports:
+      - "${MYSQL_HOST_PORT}:${MYSQL_DIST_PORT}"
+    networks:
+      - app-net
+    env_file:
+      - .env
   app:
     build:
       context: ./
@@ -25,5 +26,12 @@ services:
     volumes:
       - ..:/app
     command: /bin/sh -c "while sleep 1000; do :; done"
+    networks:
+      - app-net
+    depends_on:
+      - mysql
     env_file:
       - .env.go.local
+networks:
+  app-net:
+    driver: bridge
