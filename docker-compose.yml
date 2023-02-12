@@ -11,3 +11,19 @@ services:
       MYSQL_PASSWORD: "${MYSQL_PASSWORD}"
       MYSQL_ROOT_PASSWORD: "${MYSQL_ROOT_PASSWORD}"
       MYSQL_DATABASE: "${MYSQL_DATABASE}"
+    volumes:
+      - ./docker/db/data:/var/lib/mysql
+      - ./docker/db/my.cnf:/etc/mysql/conf.d/my.cnf
+      - ./docker/db/sql:/docker-entrypoint-initdb.d
+  app:
+    build:
+      context: ./
+      dockerfile: ./Dockerfile
+    tty: true
+    ports:
+      - 8080:8080
+    volumes:
+      - ..:/app
+    command: /bin/sh -c "while sleep 1000; do :; done"
+    env_file:
+      - .env.go.local
